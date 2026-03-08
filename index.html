@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>606 Universal Shelving — Configure</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --w:#fff;--off:#f7f7f7;--r:#e8e8e8;--rm:#ccc;
+  --mid:#999;--dk:#444;--blk:#111;--or:#e8470a;
+  --nb:#f5f2eb;--wb:#eaf0f5;--nbd:#c8a84a;--wbd:#5090b8;
+  --f:'Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+html{font-size:15px;-webkit-font-smoothing:antialiased}
+body{background:var(--w);color:var(--blk);font-family:var(--f);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+/* ── HEADER ── */
+header{background:var(--w);border-bottom:1px solid var(--r);padding:0 16px;height:44px;display:flex;align-items:center;gap:0;z-index:50;flex-shrink:0}
+.logo{font-size:1.1rem;font-weight:300;font-style:italic;letter-spacing:-.01em}
+.hd{width:1px;height:16px;background:var(--r);margin:0 12px}
+.ht{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mid)}
+.hactions{margin-left:auto;display:flex;align-items:center;gap:6px}
+.hbtn{padding:4px 9px;border:1px solid var(--r);background:var(--w);font-family:var(--f);font-size:.56rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);cursor:pointer;transition:all .12s}
+.hbtn:hover{border-color:var(--rm);color:var(--dk)}
+.htot{display:flex;align-items:baseline;gap:5px;padding-left:12px;border-left:1px solid var(--r)}
+.htl{font-size:.56rem;color:var(--mid);letter-spacing:.06em;text-transform:uppercase}
+.hta{font-size:.88rem;font-weight:300}
+
+/* ── ORANGE COST BAR ── */
+.obar{background:var(--or);color:#fff;padding:0 16px;height:30px;display:flex;align-items:center;gap:14px;flex-shrink:0}
+.obt{font-size:.88rem;font-weight:300}
+.obd{font-size:.54rem;opacity:.82}
+.obn{margin-left:auto;font-size:.52rem;opacity:.6;text-align:right}
+
+/* ── WORKSPACE: 3 panes ── */
+.workspace{display:flex;flex:1;min-height:0;overflow:hidden}
+
+/* ══ LEFT PANE — palette ══ */
+.palette{width:210px;flex-shrink:0;border-right:1px solid var(--r);display:flex;flex-direction:column;overflow:hidden;background:var(--w)}
+
+/* Palette — full column is a flex column. Collapsible sections shrink, components flex:1 */
+/* Collapsible sections */
+.pal-sec-wrap{flex-shrink:0;border-bottom:1px solid var(--r);min-height:0}
+.pal-sec-head{height:32px;display:flex;align-items:center;padding:0 10px;cursor:pointer;user-select:none;gap:6px;background:var(--off)}
+.pal-sec-head:hover{background:#ececec}
+.psarr{font-size:.54rem;color:var(--mid);transition:transform .14s;display:inline-block}
+.pal-sec-wrap.open .psarr{transform:rotate(90deg)}
+.pal-sec-lbl{font-size:.56rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--dk);flex:1}
+.pal-sec-val{font-size:.5rem;color:#bbb;white-space:nowrap}
+.pal-sec-body{display:none;padding:8px 10px 10px;overflow-y:auto;max-height:260px}
+.pal-sec-wrap.open .pal-sec-body{display:block}
+
+/* Components section — takes ALL remaining height, always visible */
+.pal-comps{flex:1;min-height:120px;display:flex;flex-direction:column;overflow:hidden}
+.pal-comps-head{flex-shrink:0;border-bottom:1px solid var(--r);padding:6px 10px 5px;background:var(--off)}
+.pal-comps-title{font-size:.56rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--dk);margin-bottom:5px}
+.pal-filter{display:flex;gap:0}
+.pff{flex:1;padding:3px 0;border:1px solid var(--r);background:var(--w);font-family:var(--f);font-size:.52rem;color:var(--mid);cursor:pointer;text-align:center;transition:all .1s}
+.pff:not(:last-child){border-right:none}
+.pff:hover{background:var(--off)}
+.pff.on{background:var(--blk);color:#fff;border-color:var(--blk)}
+.pff.onn{background:var(--nb);color:#7a6030;border-color:var(--nbd)}
+.pff.onw{background:var(--wb);color:#3060a0;border-color:var(--wbd)}
+.pal-scroll{flex:1;overflow-y:auto;padding:5px}
+
+.pal-grp-lbl{font-size:.46rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);padding:6px 3px 3px;border-bottom:1px solid var(--r);margin-bottom:2px}
+.pal-grp-lbl:first-child{padding-top:2px}
+
+/* Palette item */
+.pit{display:flex;align-items:center;gap:5px;padding:4px 5px;border:1px solid var(--r);background:var(--w);cursor:grab;margin-bottom:2px;transition:all .1s;user-select:none;-webkit-user-drag:element}
+.pit:hover:not(.dis){border-color:var(--rm);box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.pit.dis{opacity:.3;cursor:not-allowed}
+.pit-t{flex:1;min-width:0}
+.pit-n{font-size:.58rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pit-s{font-size:.46rem;color:var(--mid);margin-top:1px}
+.pit-p{font-size:.48rem;color:var(--mid);white-space:nowrap;flex-shrink:0}
+.wtag{font-size:.42rem;padding:1px 3px;vertical-align:1px}
+.wtag-n{background:var(--nb);color:#7a6030;border:1px solid var(--nbd)}
+.wtag-w{background:var(--wb);color:#3060a0;border:1px solid var(--wbd)}
+
+/* Drag ghost */
+.drag-ghost{position:fixed;pointer-events:none;z-index:9999;opacity:.9;border:1px solid var(--rm);background:var(--w);padding:3px 8px 3px 5px;font-size:.58rem;border-radius:2px;white-space:nowrap;display:none;align-items:center;gap:5px;box-shadow:0 3px 12px rgba(0,0,0,.18)}
+
+/* Bay-count row */
+.bay-row{display:flex;align-items:center;gap:0;margin-bottom:6px}
+.bay-btn{width:24px;height:24px;border:1px solid var(--rm);background:var(--w);font-size:.9rem;color:var(--dk);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.bay-btn:hover:not(:disabled){background:var(--off)}
+.bay-btn:disabled{opacity:.22;cursor:default}
+.bay-num{width:32px;height:24px;border-top:1px solid var(--rm);border-bottom:1px solid var(--rm);display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:300}
+.hint{font-size:.54rem;color:var(--mid);line-height:1.6;margin-left:8px}
+
+/* Track table */
+.tt{width:100%;border-collapse:collapse;margin-bottom:2px}
+.tt th{font-size:.48rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);text-align:left;padding:0 0 4px;border-bottom:1px solid var(--r)}
+.tt td{padding:3px 0 1px;vertical-align:middle}
+.thead-row td{padding-top:5px;border-top:1px solid var(--off)}
+.thead-row:first-child td{border-top:none;padding-top:3px}
+.tpos-row td{padding:1px 0 4px}
+.tpos-row.tpos-dis{opacity:.32;pointer-events:none}
+.tpos-lbl{font-size:.44rem;color:var(--mid);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;min-width:36px}
+.tbg{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid var(--rm);font-size:.48rem;color:var(--mid)}
+.thbs{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.thb{padding:2px 4px;border:1px solid var(--r);background:var(--w);font-family:var(--f);font-size:.48rem;color:var(--mid);cursor:pointer;transition:all .1s;text-align:center}
+.thb:hover{border-color:var(--rm);color:var(--dk)}
+.thb.sel{background:var(--blk);color:#fff;border-color:var(--blk)}
+.tpw{display:flex;align-items:center;gap:3px}
+.tpw-dis{opacity:.3;pointer-events:none}
+.tps{-webkit-appearance:none;appearance:none;width:52px;height:2px;background:var(--rm);outline:none;cursor:pointer}
+.tps::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:50%;background:var(--blk);cursor:pointer}
+.tpv{font-size:.48rem;color:var(--dk);min-width:22px;font-weight:500}
+
+/* Bay-width rows */
+.bsr{display:flex;align-items:center;gap:5px;padding:3px 5px;border:1px solid var(--r);background:var(--w);margin-bottom:2px}
+.bsrn{font-size:.48rem;color:var(--mid);min-width:12px}
+.bst{display:flex;margin-left:auto}
+.bso{padding:2px 7px;border:1px solid var(--r);background:var(--w);font-family:var(--f);font-size:.48rem;color:var(--mid);cursor:pointer;transition:all .1s}
+.bso:first-child{border-right:none}
+.bso:hover{background:var(--off);color:var(--dk)}
+.bso.an{background:var(--nb);color:#7a6030;border-color:var(--nbd)}
+.bso.aw{background:var(--wb);color:#3060a0;border-color:var(--wbd)}
+.cpyb{font-size:.44rem;border:1px solid var(--r);background:var(--w);padding:2px 4px;cursor:pointer;color:var(--mid);margin-left:3px}
+.cpyb:hover{color:var(--dk);border-color:var(--rm)}
+
+/* Posts */
+.pc{border:1px solid var(--r);padding:5px 7px;margin-bottom:3px}
+.pcn{font-size:.64rem;margin-bottom:1px}
+.pcd{font-size:.48rem;color:var(--mid);line-height:1.4;margin-bottom:4px}
+.pcf{display:flex;align-items:center;justify-content:space-between}
+.pcp{font-size:.52rem}
+.pcq{display:flex;align-items:center}
+.pcqb{width:15px;height:15px;border:1px solid var(--r);background:var(--w);cursor:pointer;font-size:.7rem;color:var(--dk);display:flex;align-items:center;justify-content:center}
+.pcqb:hover{background:var(--off)}
+.pcqn{width:16px;height:15px;border-top:1px solid var(--r);border-bottom:1px solid var(--r);display:flex;align-items:center;justify-content:center;font-size:.56rem}
+
+/* ══ MIDDLE PANE — canvas ══ */
+.canvas-wrap{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
+.canvas-bar{height:34px;border-bottom:1px solid var(--r);display:flex;align-items:center;padding:0 12px;gap:8px;flex-shrink:0;background:var(--w)}
+.canvas-hint{font-size:.52rem;color:#bbb}
+.czoom{display:flex;align-items:center;gap:3px;margin-left:auto}
+.czb{width:20px;height:20px;border:1px solid var(--r);background:var(--w);font-size:.75rem;color:var(--dk);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.czb:hover{background:var(--off)}
+.czv{font-size:.52rem;color:var(--mid);min-width:34px;text-align:center}
+.canvas-svg{flex:1;overflow:auto;background:var(--off);position:relative}
+.canvas-empty-msg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;pointer-events:none}
+.canvas-empty-t{font-size:.72rem;color:#c0c0c0}
+.canvas-empty-s{font-size:.58rem;color:#ccc}
+
+/* ══ RIGHT PANE — summary / cost ══ */
+.summary-panel{width:240px;flex-shrink:0;border-left:1px solid var(--r);display:flex;flex-direction:column;overflow:hidden}
+.sum-head{padding:9px 13px 7px;border-bottom:1px solid var(--r);flex-shrink:0;display:flex;align-items:center;gap:8px}
+.sum-title{font-size:.58rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--dk);flex:1}
+.tog{display:flex;border:1px solid var(--r)}
+.togb{padding:2px 7px;font-family:var(--f);font-size:.5rem;color:var(--mid);background:var(--w);border:none;cursor:pointer;transition:all .1s}
+.togb:first-child{border-right:1px solid var(--r)}
+.togb.on{background:var(--blk);color:#fff}
+.sum-body{flex:1;overflow-y:auto;padding:7px 13px}
+.sg{margin-bottom:10px}
+.sgl{font-size:.48rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);padding-bottom:3px;border-bottom:1px solid var(--r);margin-bottom:3px}
+.sl{display:grid;grid-template-columns:1fr auto;padding:2px 0;border-bottom:1px solid var(--off);gap:4px;align-items:baseline}
+.sln{font-size:.62rem;color:var(--dk)}
+.slsub{font-size:.46rem;color:var(--mid)}
+.slp{font-size:.54rem;color:var(--dk);text-align:right;white-space:nowrap}
+.ae{font-size:.54rem;color:var(--mid);line-height:1.8;padding:4px 0}
+.sum-foot{padding:9px 13px;border-top:1px solid var(--r);flex-shrink:0}
+.cfl{font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);margin-bottom:1px}
+.cfa{font-size:1.4rem;font-weight:300;letter-spacing:-.02em}
+.cfn{font-size:.48rem;color:var(--mid);line-height:1.6;margin-top:2px}
+.cfb{display:block;width:100%;margin-top:6px;padding:7px;background:var(--blk);color:#fff;border:none;font-family:var(--f);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .12s}
+.cfb:hover{background:var(--or)}
+.cfb:disabled{background:var(--r);color:var(--mid);cursor:default}
+.cfr{display:block;width:100%;margin-top:3px;padding:4px;background:transparent;color:var(--mid);border:1px solid var(--r);font-family:var(--f);font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .12s}
+.cfr:hover{border-color:var(--rm);color:var(--dk)}
+
+/* comp hover del */
+.comp-g .del-bg{opacity:0;transition:opacity .1s}
+.comp-g .del-x{opacity:0;transition:opacity .1s}
+.comp-g:hover .del-bg{opacity:1}
+.comp-g:hover .del-x{opacity:1}
+
+/* ── MODALS ── */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.32);z-index:200;align-items:center;justify-content:center}
+.mbg.show{display:flex}
+.modal{background:var(--w);border:1px solid var(--rm);padding:20px 22px;min-width:240px;max-width:360px;width:90%}
+.modal h3{font-size:.76rem;font-weight:500;letter-spacing:.04em;text-transform:uppercase;margin-bottom:12px}
+.modal-opts{display:flex;flex-direction:column;gap:3px;margin-bottom:12px}
+.modal-opt{padding:6px 9px;border:1px solid var(--r);background:var(--w);text-align:left;font-family:var(--f);font-size:.64rem;color:var(--dk);cursor:pointer;transition:all .1s}
+.modal-opt:hover{background:var(--off);border-color:var(--rm)}
+.modal-cancel{font-size:.52rem;color:var(--mid);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:var(--f)}
+.modal textarea{width:100%;height:110px;font-family:monospace;font-size:.58rem;border:1px solid var(--r);padding:5px;resize:vertical;margin-bottom:7px}
+.mrow{display:flex;gap:5px;flex-wrap:wrap}
+.mbtn{padding:5px 10px;border:1px solid var(--r);background:var(--w);font-family:var(--f);font-size:.54rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);cursor:pointer;transition:all .1s}
+.mbtn:hover{border-color:var(--rm);color:var(--dk)}
+.mbtn.pri{background:var(--blk);color:#fff;border-color:var(--blk)}
+.mbtn.pri:hover{background:var(--or);border-color:var(--or)}
+.merr{font-size:.54rem;color:var(--or);margin-top:5px;min-height:14px}
+.otag{font-size:.46rem;color:var(--mid);background:var(--off);padding:1px 4px;border:1px solid var(--r);margin-left:4px}
+
+/* ── PRINT STYLES ── */
+@media print{
+  body{height:auto;overflow:visible;display:block}
+  header,.obar,.palette,.canvas-bar,.canvas-hint,.summary-panel,.mbg,.czoom{display:none!important}
+  .workspace{display:block;height:auto}
+  .canvas-wrap{display:block;overflow:visible;height:auto}
+  .canvas-svg{display:none!important}
+  #print-svg{display:block!important;margin-bottom:20px}
+  #print-summary{display:block!important}
+}
+#print-summary{display:none;padding:20px 0 0;font-family:var(--f)}
+#print-svg{display:none}
+#print-summary h2{font-size:1rem;font-weight:300;margin-bottom:12px;letter-spacing:-.01em}
+#print-summary table{width:100%;border-collapse:collapse;font-size:.72rem}
+#print-summary td,#print-summary th{padding:4px 8px;border-bottom:1px solid #e0e0e0;text-align:left}
+#print-summary th{font-size:.58rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--mid)}
+#print-summary .total-row td{font-weight:500;border-top:2px solid #ccc;border-bottom:none}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Vitsœ</div>
+  <div class="hd"></div>
+  <div class="ht">606 Configurator</div>
+  <div class="hactions">
+    <button class="hbtn" onclick="openSave()">Export</button>
+    <button class="hbtn" onclick="openLoad()">Import</button>
+    <div class="htot"><span class="htl">Total</span><span class="hta" id="hta">$0</span></div>
+  </div>
+</header>
+
+<div class="obar">
+  <div class="obt" id="obt">$0</div>
+  <div class="obd" id="obd"></div>
+  <div class="obn">Prices USD · Delivery incl. (contiguous US)</div>
+</div>
+
+<div class="workspace">
+
+  <!-- ══ LEFT: PALETTE ══ -->
+  <div class="palette">
+
+    <!-- Structure section — open by default so first-time users see what to do -->
+    <div class="pal-sec-wrap open" id="pssec-structure">
+      <div class="pal-sec-head" onclick="togglePalSec('pssec-structure')">
+        <span class="psarr">›</span>
+        <span class="pal-sec-lbl">Structure</span>
+        <span class="pal-sec-val" id="struct-val">—</span>
+      </div>
+      <div class="pal-sec-body">
+        <!-- Bay count -->
+        <div style="margin-bottom:9px">
+          <div style="font-size:.5rem;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Bays</div>
+          <div class="bay-row">
+            <button class="bay-btn" id="bm" onclick="chgBays(-1)" disabled>−</button>
+            <div class="bay-num" id="bd">0</div>
+            <button class="bay-btn" onclick="chgBays(1)">+</button>
+            <span class="hint" id="bdrv"></span>
+          </div>
+        </div>
+        <!-- Track heights -->
+        <div id="track-section" style="display:none;margin-bottom:9px">
+          <div style="font-size:.5rem;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Tracks</div>
+        <table class="tt"><thead><tr><th style="width:18px"></th><th colspan="2">Height</th></tr></thead>
+          <tbody id="ttb"></tbody></table>
+        </div>
+        <!-- Bay widths -->
+        <div id="width-section" style="display:none">
+          <div style="font-size:.5rem;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Bay widths</div>
+          <div id="bsl"></div>
+          <div style="font-size:.5rem;color:var(--mid);margin-top:3px" id="wn"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Posts section -->
+    <div class="pal-sec-wrap" id="pssec-posts">
+      <div class="pal-sec-head" onclick="togglePalSec('pssec-posts')">
+        <span class="psarr">›</span>
+        <span class="pal-sec-lbl">Posts <span class="otag">Optional</span></span>
+        <span class="pal-sec-val" id="posts-val"></span>
+      </div>
+      <div class="pal-sec-body">
+        <div id="pgr"></div>
+      </div>
+    </div>
+
+    <!-- Components section — takes rest of height -->
+    <div class="pal-comps">
+      <div class="pal-comps-head">
+        <div class="pal-comps-title">Components</div>
+        <div class="pal-filter">
+          <button class="pff on"  id="pff-all"    onclick="setPalFilter('all')">All</button>
+          <button class="pff"     id="pff-narrow" onclick="setPalFilter('narrow')">Narrow</button>
+          <button class="pff"     id="pff-wide"   onclick="setPalFilter('wide')">Wide</button>
+        </div>
+      </div>
+      <div class="pal-scroll" id="pal-scroll"></div>
+    </div>
+
+  </div><!-- /palette -->
+
+  <!-- ══ MIDDLE: CANVAS ══ -->
+  <div class="canvas-wrap">
+    <div class="canvas-bar">
+      <span class="canvas-hint" id="canvas-hint">Configure structure, then drag components onto bays</span>
+      <div class="czoom">
+        <button class="czb" onclick="adjZoom(-0.25)">−</button>
+        <span class="czv" id="czv">100%</span>
+        <button class="czb" onclick="adjZoom(0.25)">+</button>
+        <button class="czb" style="width:28px;font-size:.46rem" onclick="fitZoom()">fit</button>
+      </div>
+    </div>
+    <div class="canvas-svg" id="canvas-svg">
+      <div class="canvas-empty-msg" id="canvas-empty">
+        <div class="canvas-empty-t">No bays configured</div>
+        <div class="canvas-empty-s">Add bays using the Structure panel on the left</div>
+      </div>
+    </div>
+    <!-- Print summary (hidden until print) -->
+    <div id="print-summary"></div>
+    <div id="print-svg"></div>
+  </div>
+
+  <!-- ══ RIGHT: SUMMARY ══ -->
+  <div class="summary-panel">
+    <div class="sum-head">
+      <span class="sum-title">Summary</span>
+      <div class="tog">
+        <button class="togb on" id="tog-bay"  onclick="setGroup('bay')">Bay</button>
+        <button class="togb"    id="tog-item" onclick="setGroup('item')">Item</button>
+      </div>
+    </div>
+    <div class="sum-body" id="sum-body"><div class="ae">Add bays to begin.</div></div>
+    <div class="sum-foot">
+      <div class="cfl">Estimated total</div>
+      <div class="cfa" id="cfa">$0</div>
+      <div class="cfn">USD incl. delivery (contiguous US)</div>
+      <button class="cfb" id="cfb" disabled onclick="printQuote()">Print quote</button>
+      <button class="cfr" onclick="resetAll()">Clear configuration</button>
+    </div>
+  </div>
+
+</div><!-- /workspace -->
+
+<!-- drag ghost -->
+<div class="drag-ghost" id="drag-ghost"></div>
+
+<!-- DUP MODAL -->
+<div class="mbg" id="dup-modal">
+  <div class="modal">
+    <h3>Copy from bay…</h3>
+    <div class="modal-opts" id="dup-opts"></div>
+    <button class="modal-cancel" onclick="closeModal('dup-modal')">Cancel</button>
+  </div>
+</div>
+
+<!-- SAVE MODAL -->
+<div class="mbg" id="save-modal">
+  <div class="modal">
+    <h3>Export configuration</h3>
+    <textarea id="save-ta" readonly onclick="this.select()"></textarea>
+    <div class="mrow">
+      <button class="mbtn pri" onclick="copyJSON()">Copy</button>
+      <button class="mbtn" onclick="dlJSON()">Download</button>
+      <button class="mbtn" onclick="closeModal('save-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOAD MODAL -->
+<div class="mbg" id="load-modal">
+  <div class="modal">
+    <h3>Import configuration</h3>
+    <textarea id="load-ta" placeholder="Paste exported JSON here…"></textarea>
+    <div class="mrow">
+      <button class="mbtn pri" onclick="loadJSON()">Import</button>
+      <button class="mbtn" onclick="closeModal('load-modal')">Cancel</button>
+    </div>
+    <div class="merr" id="load-err"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const SLOT=32;
+const SC_BASE=8; // SVG units per slot at zoom 1
+const TW=10, ML=18, MT=22, MB=32; // track width, margins
+
+const ET=[
+  {id:'sm',l:'22½"',mm:572, p:75},
+  {id:'md',l:'44⅞"',mm:1140,p:100},
+  {id:'lg',l:'67⅜"',mm:1711,p:115},
+  {id:'xl',l:'78½"',mm:1994,p:125},
+];
+const BW={
+  narrow:{l:'Narrow',abbr:'N',in:'26¼"',mm:667,u:82},
+  wide:  {l:'Wide',  abbr:'W',in:'35⅞"',mm:912,u:112},
+};
+const POSTS=[
+  {id:'xp90', n:'X-Post 90"',      d:'Floor-to-ceiling',p:375},
+  {id:'xp102',n:'X-Post 91–102"',  d:'Floor-to-ceiling',p:396},
+  {id:'xp114',n:'X-Post 103–114"', d:'Floor-to-ceiling',p:417},
+  {id:'xp126',n:'X-Post 115–126"', d:'Floor-to-ceiling',p:438},
+  {id:'xp138',n:'X-Post 127–138"', d:'Floor-to-ceiling',p:459},
+  {id:'hp78', n:'H-Post 75–78"',   d:'Freestanding',    p:435},
+  {id:'hp150',n:'H-Post 139–150"', d:'Tall freestanding',p:615},
+  {id:'hp162',n:'H-Post 151–162"', d:'Tall freestanding',p:645},
+  {id:'hp174',n:'H-Post 163–174"', d:'Tall freestanding',p:675},
+  {id:'hp186',n:'H-Post 175–186"', d:'Tall freestanding',p:705},
+];
+// hs = slots occupied/blocked (stacking & collision logic)
+// rh = rendered height in slots. All shelves are the same thin bracket vertically —
+//      depth from wall differs but doesn't affect vertical space. 2sl ≈ 64mm looks right.
+//      Double shelf = two brackets + gap = 4sl. Desk = same thin profile = 2sl.
+//      Cabinets & table: hs==rh (they physically fill their full slot height).
+const IT=[
+  {id:'shn', bw:'narrow',n:'Shelf',               sub:'26" · 8¾"',   p:135, t:'shelf',    hs:1, rh:2,  c:'#dddad3',b:'#aaa69a'},
+  {id:'dhn', bw:'narrow',n:'Deep Shelf',           sub:'26" · 14¼"',  p:155, t:'deepshelf',hs:1, rh:2,  c:'#d8d5ce',b:'#a4a098'},
+  {id:'ssn', bw:'narrow',n:'Single Shelf',         sub:'26" · 14¼"',  p:145, t:'singlesh', hs:1, rh:2,  c:'#dad7d0',b:'#a8a49c'},
+  {id:'dsbn',bw:'narrow',n:'Double Shelf',         sub:'26" · 14¼"',  p:220, t:'doublesh', hs:3, rh:4,  c:'#d4d1ca',b:'#a29e96'},
+  {id:'c1n', bw:'narrow',n:'1-Drawer Cabinet',     sub:'26" · 15½"',  p:1175,t:'cab1',    hs:12, rh:12, c:'#cac7c0',b:'#9a9790'},
+  {id:'c2n', bw:'narrow',n:'2-Drawer Cabinet',     sub:'26" · 15½"',  p:1295,t:'cab2',    hs:12, rh:12, c:'#c8c5be',b:'#98948c'},
+  {id:'c3n', bw:'narrow',n:'3-Drawer Cabinet',     sub:'26" · 15½"',  p:1415,t:'cab3',    hs:12, rh:12, c:'#c6c3bc',b:'#96928a'},
+  {id:'c1ln',bw:'narrow',n:'1-Drawer w/ Lock',     sub:'26" · 15½"',  p:1225,t:'cab1l',   hs:12, rh:12, c:'#c8c5be',b:'#98948c'},
+  {id:'uon', bw:'narrow',n:'Up-and-Over',          sub:'26" · 15½"',  p:1375,t:'upover',  hs:12, rh:12, c:'#c5c2bb',b:'#96928a'},
+  {id:'fdln',bw:'narrow',n:'Fold-down w/ Lock',    sub:'26" · 15½"',  p:1425,t:'foldlock',hs:12, rh:12, c:'#c3c0b9',b:'#949089'},
+  {id:'dfn', bw:'narrow',n:'Drop-flap Cabinet',    sub:'26" · 15½"',  p:1375,t:'dropflap',hs:12, rh:12, c:'#c2bfb8',b:'#929088'},
+  {id:'sldn',bw:'narrow',n:'Sliding-door Cabinet', sub:'26" · 15½"',  p:1375,t:'slider',  hs:12, rh:12, c:'#c0bdb6',b:'#908e86'},
+  {id:'dsn', bw:'narrow',n:'Desk Shelf',           sub:'26" · 2⅝"',   p:395, t:'desk',    hs:2,  rh:2,  c:'#d8ceb8',b:'#b0a07a'},
+  {id:'tbn', bw:'narrow',n:'Table 31½"',           sub:'26" · 29½"',  p:855, t:'table',   hs:23, rh:23, c:'#d0cdc6',b:'#a0a098'},
+  {id:'shw', bw:'wide',  n:'Shelf',                sub:'35½" · 8¾"',  p:165, t:'shelf',   hs:1,  rh:2,  c:'#ccd4d8',b:'#90acb8'},
+  {id:'dhw', bw:'wide',  n:'Deep Shelf',           sub:'35½" · 14¼"', p:185, t:'deepshelf',hs:1, rh:2,  c:'#c4ccd0',b:'#8aa4ac'},
+  {id:'ssw', bw:'wide',  n:'Single Shelf',         sub:'35½" · 14¼"', p:175, t:'singlesh',hs:1,  rh:2,  c:'#c8d0d4',b:'#8ca8b2'},
+  {id:'dsbw',bw:'wide',  n:'Double Shelf',         sub:'35½" · 14¼"', p:265, t:'doublesh',hs:3,  rh:4,  c:'#c2cad0',b:'#86a2aa'},
+  {id:'c1w', bw:'wide',  n:'1-Drawer Cabinet',     sub:'35½" · 15½"', p:1395,t:'cab1',   hs:12,  rh:12, c:'#bec8cc',b:'#84a0a8'},
+  {id:'c2w', bw:'wide',  n:'2-Drawer Cabinet',     sub:'35½" · 15½"', p:1515,t:'cab2',   hs:12,  rh:12, c:'#bcc6ca',b:'#829ea6'},
+  {id:'c3w', bw:'wide',  n:'3-Drawer Cabinet',     sub:'35½" · 15½"', p:1635,t:'cab3',   hs:12,  rh:12, c:'#bac4c8',b:'#809ca4'},
+  {id:'c1lw',bw:'wide',  n:'1-Drawer w/ Lock',     sub:'35½" · 15½"', p:1445,t:'cab1l',  hs:12,  rh:12, c:'#bcc6ca',b:'#829ea6'},
+  {id:'uow', bw:'wide',  n:'Up-and-Over',          sub:'35½" · 15½"', p:1595,t:'upover', hs:12,  rh:12, c:'#b8c2c6',b:'#809ca2'},
+  {id:'fdlw',bw:'wide',  n:'Fold-down w/ Lock',    sub:'35½" · 15½"', p:1645,t:'foldlock',hs:12, rh:12, c:'#b6c0c4',b:'#7e9aa0'},
+  {id:'dfw', bw:'wide',  n:'Drop-flap Cabinet',    sub:'35½" · 15½"', p:1595,t:'dropflap',hs:12, rh:12, c:'#b4bec2',b:'#7c989e'},
+  {id:'sdw', bw:'wide',  n:'Sliding-door Cabinet', sub:'35½" · 15½"', p:1595,t:'slider', hs:12,  rh:12, c:'#b2bcc0',b:'#7a969c'},
+  {id:'dsw', bw:'wide',  n:'Desk Shelf',           sub:'35½" · 2⅝"',  p:455, t:'desk',   hs:2,   rh:2,  c:'#ccc0a8',b:'#a09878'},
+  {id:'tbw', bw:'wide',  n:'Table 31½"',           sub:'35½" · 29½"', p:955, t:'table',  hs:23,  rh:23, c:'#c8c5be',b:'#9898a0'},
+];
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let nB=0, tH=[], tO=[], bW=[], pQ={}, bI=[], uid=0;
+let groupMode='bay', palFilter='all', zoom=1;
+let dragIid=null; // iid being dragged from palette
+
+const gET=i=>ET.find(e=>e.id===tH[i])||null;
+const tSl=i=>{const t=gET(i);return t?Math.floor(t.mm/SLOT):0;};
+const bSl=i=>Math.min(tSl(i),tSl(i+1));
+const bMx=i=>Math.max(tSl(i),tSl(i+1));
+const bayU=i=>BW[bW[i]||'narrow'].u; // width in SVG units
+
+// ══════════════════════════════════════════════
+// SVG DRAWING HELPERS
+// ══════════════════════════════════════════════
+function dc(t,w,h,c,b){ // drawComp
+  const r=`<rect x=".5" y=".5" width="${w-1}" height="${h-1}" rx="2" fill="${c}" stroke="${b}" stroke-width=".7"/>`;
+  if(t==='shelf'){const d=Math.max(1.5,h*.2);return r+`<rect x="1" y="${h-d}" width="${w-2}" height="${d-.5}" rx="1" fill="${b}" opacity=".22"/>`;}
+  if(t==='deepshelf'){const d=Math.max(2,h*.3);return r+`<rect x="1" y="${h-d}" width="${w-2}" height="${d-.5}" rx="1" fill="${b}" opacity=".28"/>`;}
+  if(t==='singlesh'){const d=Math.max(2,h*.35);return r+`<rect x="1" y="1" width="${w-2}" height="${Math.max(1.5,h*.15)}" rx="1" fill="${b}" opacity=".18"/><rect x="1" y="${h-d}" width="${w-2}" height="${d-.5}" rx="1" fill="${b}" opacity=".25"/>`;}
+  if(t==='doublesh'){const m=h/2,th=Math.max(2,h*.12);return r+`<rect x="1" y="${m*.35}" width="${w-2}" height="${th}" rx="1" fill="${b}" opacity=".3"/><rect x="1" y="${m*1.4}" width="${w-2}" height="${th}" rx="1" fill="${b}" opacity=".3"/>`;}
+  if(t==='desk'){const l=h*.4;return r+`<rect x="1" y="${l}" width="${w-2}" height="${h-l-.5}" rx="1" fill="${b}" opacity=".15"/><line x1="1" y1="${l}" x2="${w-1}" y2="${l}" stroke="${b}" stroke-width=".6" opacity=".4"/>`;}
+  if(t==='cab1'){const mt=h*.1,dh=h*.8,dw=w*.78,dx=(w-dw)/2,hh=Math.min(2.5,h*.06),hw=Math.min(dw*.35,12),hx=(w-hw)/2,hy=mt+dh/2-hh/2;return r+`<rect x="${dx}" y="${mt}" width="${dw}" height="${dh}" rx="1.5" fill="${b}" opacity=".12" stroke="${b}" stroke-width=".5"/><rect x="${hx}" y="${hy}" width="${hw}" height="${hh}" rx="${hh/2}" fill="${b}" opacity=".55"/>`;}
+  if(t==='cab1l'){const mt=h*.1,dh=h*.8,dw=w*.78,dx=(w-dw)/2,hh=Math.min(2.5,h*.06),hw=Math.min(dw*.35,12),hx=(w-hw)/2,hy=mt+dh/2-hh/2,lx=dx+dw*.8,ly=mt+dh*.3,lr=Math.min(2.2,h*.04);return r+`<rect x="${dx}" y="${mt}" width="${dw}" height="${dh}" rx="1.5" fill="${b}" opacity=".12" stroke="${b}" stroke-width=".5"/><rect x="${hx}" y="${hy}" width="${hw}" height="${hh}" rx="${hh/2}" fill="${b}" opacity=".55"/><circle cx="${lx}" cy="${ly}" r="${lr}" fill="none" stroke="${b}" stroke-width=".7" opacity=".5"/>`;}
+  if(t==='cab2'){const mt=h*.07,gap=h*.04,dh=(h-mt*2-gap)/2,dw=w*.78,dx=(w-dw)/2,hh=Math.min(2,h*.045),hw=Math.min(dw*.32,10),hx=(w-hw)/2,d1y=mt,d2y=mt+dh+gap,h1y=d1y+dh/2-hh/2,h2y=d2y+dh/2-hh/2;return r+`<rect x="${dx}" y="${d1y}" width="${dw}" height="${dh}" rx="1.5" fill="${b}" opacity=".12" stroke="${b}" stroke-width=".5"/><rect x="${hx}" y="${h1y}" width="${hw}" height="${hh}" rx="${hh/2}" fill="${b}" opacity=".52"/><rect x="${dx}" y="${d2y}" width="${dw}" height="${dh}" rx="1.5" fill="${b}" opacity=".12" stroke="${b}" stroke-width=".5"/><rect x="${hx}" y="${h2y}" width="${hw}" height="${hh}" rx="${hh/2}" fill="${b}" opacity=".52"/>`;}
+  if(t==='cab3'){const mt=h*.05,gap=h*.025,dh=(h-mt*2-gap*2)/3,dw=w*.78,dx=(w-dw)/2,hh=Math.min(1.8,h*.035),hw=Math.min(dw*.3,9),hx=(w-hw)/2;let s='';for(let i=0;i<3;i++){const dy=mt+i*(dh+gap),hy2=dy+dh/2-hh/2;s+=`<rect x="${dx}" y="${dy}" width="${dw}" height="${dh}" rx="1.5" fill="${b}" opacity=".12" stroke="${b}" stroke-width=".5"/><rect x="${hx}" y="${hy2}" width="${hw}" height="${hh}" rx="${hh/2}" fill="${b}" opacity=".5"/>`;}return r+s;}
+  if(t==='upover'){const mt=h*.07,dh=h*.86,dw=w*.8,dx=(w-dw)/2,hh=Math.min(2,h*.04),hw=Math.min(dw*.25,9),hx=(w-hw)/2,hy=mt+dh*.55;return r+`<rect x="${dx}" y="${mt}" width="${dw}" height="${dh}" rx="1.5" fill="${b}" opacity=".11" stroke="${b}" stroke-width=".5"/><path d="M${dx+2},${mt+3} Q${dx+dw/2},${mt-3} ${dx+dw-2},${mt+3}" fill="none" stroke="${b}" stroke-width=".7" opacity=".35"/><rect x="${hx}" y="${hy}" width="${hw}" height="${hh}" rx="${hh/2}" fill="${b}" opacity=".5"/>`;}
+  if(t==='foldlock'){const mt=h*.07,dh=h*.86,dw=w*.8,dx=(w-dw)/2,hh=Math.min(2,h*.04),hw=Math.min(dw*.22,8),hx=(w-hw)/2,hy=mt+dh*.5,lx=dx+dw*.78,ly=mt+dh*.32,lr=Math.min(2.2,h*.038),ax=dx+dw*.55,ay=mt+dh*.15;return r+`<rect x="${dx}" y="${mt}" width="${dw}" height="${dh}" rx="1.5" fill="${b}" opacity=".11" stroke="${b}" stroke-width=".5"/><line x1="${dx+1}" y1="${mt+1}" x2="${dx+1}" y2="${mt+dh-1}" stroke="${b}" stroke-width="1.2" opacity=".3"/><circle cx="${lx}" cy="${ly}" r="${lr}" fill="none" stroke="${b}" stroke-width=".7" opacity=".5"/><path d="M${ax},${ay} A${dh*.22},${dh*.22} 0 0,1 ${ax+dh*.2},${ay+dh*.18}" fill="none" stroke="${b}" stroke-width=".7" opacity=".38"/><rect x="${hx}" y="${hy}" width="${hw}" height="${hh}" rx="${hh/2}" fill="${b}" opacity=".5"/>`;}
+  if(t==='dropflap'){const mt=h*.08,dh=h*.84,dw=w*.8,dx=(w-dw)/2,hh=Math.min(2,h*.04),hw=Math.min(dw*.25,9),hx=(w-hw)/2,hy=mt+dh*.45;return r+`<rect x="${dx}" y="${mt}" width="${dw}" height="${dh}" rx="1.5" fill="${b}" opacity=".12" stroke="${b}" stroke-width=".5"/><line x1="${dx+2}" y1="${mt+dh}" x2="${dx+dw-2}" y2="${mt+dh}" stroke="${b}" stroke-width="1" opacity=".3"/><circle cx="${dx+5}" cy="${mt+dh-3}" r="1.2" fill="${b}" opacity=".42"/><circle cx="${dx+dw-5}" cy="${mt+dh-3}" r="1.2" fill="${b}" opacity=".42"/><rect x="${hx}" y="${hy}" width="${hw}" height="${hh}" rx="${hh/2}" fill="${b}" opacity=".5"/>`;}
+  if(t==='slider'){const mt=h*.07,dh=h*.86,dw=w*.82,dx=(w-dw)/2,mid=dx+dw/2,hh=Math.min(2,h*.04),hw=Math.min(dw*.22,8);return r+`<rect x="${dx}" y="${mt}" width="${dw/2+2}" height="${dh}" rx="1" fill="${b}" opacity=".11" stroke="${b}" stroke-width=".5"/><rect x="${mid-2}" y="${mt}" width="${dw/2+2}" height="${dh}" rx="1" fill="${b}" opacity=".11" stroke="${b}" stroke-width=".5"/><line x1="${mid}" y1="${mt+1}" x2="${mid}" y2="${mt+dh-1}" stroke="${b}" stroke-width=".8" opacity=".25"/><rect x="${dx+dw*.08}" y="${mt+dh*.45}" width="${hw}" height="${hh}" rx="${hh/2}" fill="${b}" opacity=".5"/><rect x="${dx+dw*.53}" y="${mt+dh*.45}" width="${hw}" height="${hh}" rx="${hh/2}" fill="${b}" opacity=".5"/>`;}
+  if(t==='table'){const th=Math.min(h*.14,5),lw=Math.min(w*.09,3.5),lh=h-th-1,l1=w*.18,l2=w*.82-lw;return r+`<rect x="1" y="1" width="${w-2}" height="${th}" rx="1" fill="${b}" opacity=".2"/><rect x="${l1}" y="${th+1}" width="${lw}" height="${lh-1}" rx="1" fill="${b}" opacity=".17"/><rect x="${l2}" y="${th+1}" width="${lw}" height="${lh-1}" rx="1" fill="${b}" opacity=".17"/><line x1="${l1+lw/2}" y1="${th+lh*.45}" x2="${l2+lw/2}" y2="${th+lh*.45}" stroke="${b}" stroke-width=".6" opacity=".18"/>`;}
+  return r;
+}
+
+// ══════════════════════════════════════════════
+// ZOOM
+// ══════════════════════════════════════════════
+function adjZoom(d){setZoom(zoom+d);}
+function fitZoom(){
+  if(nB===0){setZoom(1);return;}
+  const wrap=document.getElementById('canvas-svg');
+  const tw=totalSvgW(), fH=floorY()+52;
+  const availW=wrap.clientWidth-20, availH=wrap.clientHeight-20;
+  const z=Math.min(availW/tw, availH/fH, 3);
+  setZoom(Math.max(0.25,Math.round(z*4)/4));
+}
+function setZoom(z){zoom=Math.max(0.25,Math.min(3,z));document.getElementById('czv').textContent=Math.round(zoom*100)+'%';renderCanvas();}
+
+// ══════════════════════════════════════════════
+// CANVAS GEOMETRY (SVG user units, pre-zoom)
+// ══════════════════════════════════════════════
+function totalSvgW(){
+  let w=ML+TW;
+  for(let i=0;i<nB;i++)w+=bayU(i)+TW;
+  return w+ML;
+}
+function trackX(i){let x=ML;for(let j=0;j<i;j++)x+=TW+bayU(j);return x;}
+function bayX(i){return trackX(i)+TW;}
+function maxSl(){return Math.max(...Array.from({length:nB+1},(_,i)=>tSl(i)),1);}
+function floorY(){return MT+maxSl()*SC_BASE;}
+// tO[i] = integer slot offset from top (0=top, slack=floor-pinned)
+function trackTopY(i){const slack=maxSl()-tSl(i);const off=Math.min(Math.round(tO[i]??slack),slack);return MT+off*SC_BASE;}
+function bayUsable(i){
+  const lBot=trackTopY(i)+tSl(i)*SC_BASE, rBot=trackTopY(i+1)+tSl(i+1)*SC_BASE;
+  const bayBotY=Math.min(lBot,rBot), ns=bSl(i);
+  return{botY:bayBotY, topY:bayBotY-ns*SC_BASE, ns};
+}
+
+// ══════════════════════════════════════════════
+// RENDER CANVAS
+// ══════════════════════════════════════════════
+let hasAutoFit=false; // auto-fit once on first render
+function renderCanvas(){
+  const wrap=document.getElementById('canvas-svg');
+  if(nB===0){
+    wrap.innerHTML=`<div class="canvas-empty-msg" id="canvas-empty"><div class="canvas-empty-t">No bays configured</div><div class="canvas-empty-s">Add bays using the Structure panel on the left</div></div>`;
+    hasAutoFit=false;
+    return;
+  }
+  // Auto-fit to canvas on first meaningful render (or after bay changes)
+  if(!hasAutoFit){
+    hasAutoFit=true;
+    const tw=totalSvgW(), fH=floorY()+52; // full unscaled height including all labels
+    const availW=wrap.clientWidth-20, availH=wrap.clientHeight-20;
+    if(availW>0&&availH>0){
+      const z=Math.min(availW/tw, availH/fH, 3);
+      zoom=Math.max(0.25,Math.round(z*4)/4);
+      document.getElementById('czv').textContent=Math.round(zoom*100)+'%';
+    }
+  }
+
+  const nt=nB+1, tw=totalSvgW(), fY=floorY();
+  // Label layout below floor (all in SVG user units):
+  // fY+0  : floor line
+  // fY+9  : "floor" text
+  // fY+18 : T1, T2... track labels
+  // fY+26 : "Bay N" text
+  // fY+20-26: N/W badge
+  // fY+34 : width text (26¼" etc)
+  // fY+44 : total width dimension line + text
+  // fY+52 : bottom of SVG
+  const EXTRA_MB=52;
+  const svgW=tw*zoom, svgH=(fY+EXTRA_MB)*zoom;
+
+  let inner='';
+  inner+=`<defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#ccc" stroke-width=".8"/></pattern></defs>`;
+
+  // Floor line
+  inner+=`<line x1="${ML}" y1="${fY}" x2="${tw-ML}" y2="${fY}" stroke="#aaa" stroke-width="1.5"/>`;
+  inner+=`<text x="${ML}" y="${fY+9}" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="5" fill="#bbb">floor</text>`;
+
+  // Tracks
+  for(let i=0;i<nt;i++){
+    const tx=trackX(i), tsl=tSl(i), thPx=tsl*SC_BASE, tTop=trackTopY(i);
+    inner+=`<rect x="${tx}" y="${tTop}" width="${TW}" height="${thPx}" rx="1.5" fill="#c0bcb4"/>`;
+    for(let s=0;s<tsl;s++) inner+=`<rect x="${tx+1.5}" y="${tTop+s*SC_BASE+.3}" width="${TW-3}" height="${SC_BASE*.4}" rx=".4" fill="#807c78" opacity=".4"/>`;
+    const t=gET(i);
+    if(t) inner+=`<text x="${tx+TW/2}" y="${tTop-5}" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="5" fill="#bbb">${t.l}</text>`;
+    const off=tO[i]??1, pinL=off<=.03?'⊤':off>=.97?'⊥':`${Math.round(off*100)}%`;
+    inner+=`<text x="${tx+TW/2}" y="${tTop-11}" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="4" fill="#ccc">${pinL}</text>`;
+    inner+=`<text x="${tx+TW/2}" y="${fY+18}" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="4.5" fill="#bbb">T${i+1}</text>`;
+  }
+
+  // Bays
+  for(let i=0;i<nB;i++){
+    const bx=bayX(i), bpx=bayU(i), wt=bW[i]||'narrow';
+    const lTop=trackTopY(i), lBot=lTop+tSl(i)*SC_BASE;
+    const rTop=trackTopY(i+1), rBot=rTop+tSl(i+1)*SC_BASE;
+    const outTop=Math.min(lTop,rTop), outBot=Math.max(lBot,rBot);
+    const {botY:bayBotY, topY:bayTopY, ns}=bayUsable(i);
+    const bgC=wt==='narrow'?'#f5f2eb':'#eaf0f5';
+    const ac=wt==='narrow'?'#c8a84a':'#5090b8';
+    const tc2=wt==='narrow'?'#b8a058':'#5090b8';
+
+    inner+=`<rect x="${bx}" y="${outTop}" width="${bpx}" height="${outBot-outTop}" fill="${bgC}" opacity=".22"/>`;
+    if(bayTopY>outTop) inner+=`<rect x="${bx}" y="${outTop}" width="${bpx}" height="${bayTopY-outTop}" fill="url(#hatch)" opacity=".5"/>`;
+    if(bayBotY>bayTopY){
+      inner+=`<rect x="${bx}" y="${bayTopY}" width="${bpx}" height="${bayBotY-bayTopY}" fill="${bgC}" opacity=".35"/>`;
+      inner+=`<rect class="drop-zone" data-bi="${i}" x="${bx}" y="${bayTopY}" width="${bpx}" height="${bayBotY-bayTopY}" fill="transparent" stroke="${ac}" stroke-width=".4" stroke-dasharray="3,2"/>`;
+      // Drop ghost (hidden by default, shown during dragover)
+      inner+=`<rect class="drop-ghost" id="dg-${i}" x="${bx+1}" y="${bayTopY}" width="${bpx-2}" height="8" rx="1.5" fill="${ac}" opacity="0" style="pointer-events:none"/>`;
+    }
+
+    // Components — hs for slot position logic, rh for visual height
+    const confs=getConfs(i);
+    (bI[i]||[]).forEach(({uid:u,iid,slot})=>{
+      const it=IT.find(x=>x.id===iid); if(!it)return;
+      const ch=it.rh*SC_BASE, cw=bpx-2;
+      // Position: bottom of component sits at slot+hs from bay bottom
+      const cy=bayBotY-(slot+it.hs)*SC_BASE - (it.rh-it.hs)*SC_BASE;
+      const clash=confs.has(u);
+      const dsz=Math.min(9,ch-1), dx2=cw-dsz-1;
+      inner+=`<g class="comp-g" data-u="${u}" data-bi="${i}" transform="translate(${bx+1},${cy})">
+        ${clash?`<rect x="0" y="0" width="${cw}" height="${ch}" fill="none" stroke="#e8470a" stroke-width="1.5" rx="2"/>`:''}
+        ${dc(it.t,cw,ch,it.c,it.b)}
+        <rect class="del-bg" x="${dx2-1}" y="0" width="${dsz+2}" height="${dsz+2}" rx="1.5" fill="#e8470a" style="pointer-events:none"/>
+        <text class="del-x" x="${dx2+dsz/2}" y="${dsz*.82}" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="${dsz*.9}" fill="white" style="pointer-events:none">×</text>
+        <rect class="comp-del-hit" data-u="${u}" data-bi="${i}" x="${dx2-2}" y="-1" width="${dsz+4}" height="${dsz+4}" fill="transparent" style="cursor:pointer"/>
+      </g>`;
+    });
+
+    // Bay label: "Bay N" + N/W badge + width
+    const nwBadgeTxt=BW[wt].abbr;
+    inner+=`<text x="${bx+bpx/2}" y="${fY+26}" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="5.5" fill="${tc2}">Bay ${i+1}</text>`;
+    const badgeW=9, badgeH=6, badgeX=bx+bpx/2+bpx*.14, badgeY=fY+20;
+    inner+=`<rect x="${badgeX}" y="${badgeY}" width="${badgeW}" height="${badgeH}" rx="1" fill="${ac}" opacity=".25"/>`;
+    inner+=`<text x="${badgeX+badgeW/2}" y="${badgeY+badgeH*.82}" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="4.5" font-weight="600" fill="${tc2}">${nwBadgeTxt}</text>`;
+    inner+=`<text x="${bx+bpx/2}" y="${fY+34}" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="4.5" fill="${tc2}">${BW[wt].in}</text>`;
+  }
+
+  // Total width label — clearly below bay labels (fY+44 for line, fY+42 for text)
+  const totalMM=bW.reduce((s,w)=>s+BW[w].mm,0);
+  const totalIn=(totalMM/25.4).toFixed(1);
+  const bayAreaLeft=bayX(0), bayAreaRight=bayX(nB-1)+bayU(nB-1);
+  const midX=(bayAreaLeft+bayAreaRight)/2;
+  inner+=`<line x1="${bayAreaLeft}" y1="${fY+44}" x2="${bayAreaRight}" y2="${fY+44}" stroke="#ccc" stroke-width=".6"/>`;
+  inner+=`<line x1="${bayAreaLeft}" y1="${fY+42}" x2="${bayAreaLeft}" y2="${fY+46}" stroke="#ccc" stroke-width=".6"/>`;
+  inner+=`<line x1="${bayAreaRight}" y1="${fY+42}" x2="${bayAreaRight}" y2="${fY+46}" stroke="#ccc" stroke-width=".6"/>`;
+  inner+=`<text x="${midX}" y="${fY+41}" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="4.5" fill="#bbb">total ${totalIn}" (${totalMM}mm)</text>`;
+
+  const svg=`<svg id="main-svg" xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" style="display:block"><g transform="scale(${zoom})">${inner}</g></svg>`;
+  wrap.innerHTML=svg;
+  bindCanvasEvents();
+}
+
+function bindCanvasEvents(){
+  // Delete
+  document.querySelectorAll('.comp-del-hit').forEach(el=>{
+    el.addEventListener('click',e=>{e.stopPropagation();delIt(+el.dataset.bi,+el.dataset.u);});
+  });
+  // Drag-to-reposition (including cross-bay)
+  document.querySelectorAll('.comp-g').forEach(g=>{
+    g.style.cursor='grab';
+    g.addEventListener('mousedown',e=>{
+      if(e.target.classList.contains('comp-del-hit'))return;
+      e.preventDefault();
+      const u=+g.dataset.u, srcBi=+g.dataset.bi;
+      const srcEntry=(bI[srcBi]||[]).find(x=>x.uid===u); if(!srcEntry)return;
+      const it=IT.find(x=>x.id===srcEntry.iid); if(!it)return;
+      const startY=e.clientY, startSlot=srcEntry.slot;
+      g.style.cursor='grabbing';
+
+      // Ghost overlay div for cross-bay drag
+      const ghost=document.createElement('div');
+      ghost.style.cssText=`position:fixed;pointer-events:none;background:${it.bw==='narrow'?'rgba(200,168,74,.35)':'rgba(80,144,184,.35)'};border:1px solid ${it.bw==='narrow'?'#c8a84a':'#5090b8'};z-index:999;border-radius:2px`;
+      document.body.appendChild(ghost);
+
+      let curBi=srcBi, curSlot=startSlot;
+
+      const mv=e2=>{
+        const svgEl=document.getElementById('main-svg'); if(!svgEl)return;
+        const rect=svgEl.getBoundingClientRect();
+        const mx=(e2.clientX-rect.left)/zoom, my=(e2.clientY-rect.top)/zoom;
+
+        // Find which bay cursor is over
+        let hitBi=-1;
+        for(let i=0;i<nB;i++){
+          if(bW[i]!==it.bw)continue; // wrong width
+          const bx=bayX(i), bpx=bayU(i);
+          const{botY,topY}=bayUsable(i);
+          if(mx>=bx&&mx<=bx+bpx&&my>=topY&&my<=botY){hitBi=i;break;}
+        }
+
+        if(hitBi>=0){
+          const{botY,ns}=bayUsable(hitBi);
+          const fromBot=(botY-my)/SC_BASE;
+          curSlot=Math.max(0,Math.min(ns-it.hs,Math.round(fromBot-it.hs/2)));
+          curBi=hitBi;
+          // Position ghost div
+          const bx=bayX(hitBi)*zoom+rect.left, bpx=bayU(hitBi)*zoom;
+          const gy=(botY-(curSlot+it.hs)*SC_BASE-(it.rh-it.hs)*SC_BASE)*zoom+rect.top;
+          const gh=it.rh*SC_BASE*zoom;
+          ghost.style.left=bx+2+'px'; ghost.style.top=gy+'px';
+          ghost.style.width=bpx-4+'px'; ghost.style.height=gh+'px';
+          ghost.style.display='block';
+        } else {
+          // Floating ghost following cursor
+          ghost.style.left=e2.clientX-20+'px'; ghost.style.top=e2.clientY-10+'px';
+          ghost.style.width='40px'; ghost.style.height=it.rh*SC_BASE*zoom+'px';
+          ghost.style.display='block';
+          curBi=-1;
+        }
+      };
+
+      const up=()=>{
+        document.removeEventListener('mousemove',mv);
+        document.removeEventListener('mouseup',up);
+        ghost.remove();
+        g.style.cursor='grab';
+        if(curBi>=0&&curBi!==srcBi){
+          // Move to new bay
+          bI[srcBi]=(bI[srcBi]||[]).filter(x=>x.uid!==u);
+          bI[curBi]=(bI[curBi]||[]);
+          bI[curBi].push({uid:u,iid:srcEntry.iid,slot:curSlot});
+        } else if(curBi===srcBi){
+          srcEntry.slot=curSlot;
+        }
+        // else dropped outside any bay — leave in place
+        renderCanvas(); updateSummary(); updCost();
+      };
+      document.addEventListener('mousemove',mv);
+      document.addEventListener('mouseup',up);
+    });
+  });
+
+  // Canvas drop zones — with ghost preview
+  document.querySelectorAll('.drop-zone').forEach(dz=>{
+    dz.addEventListener('dragover',e=>{
+      e.preventDefault(); e.dataTransfer.dropEffect='copy';
+      dz.setAttribute('stroke-width','1.5');
+      // Show ghost at drop position
+      const bi=+dz.dataset.bi;
+      const iid=dragIid; if(!iid)return;
+      const it=IT.find(x=>x.id===iid); if(!it||it.bw!==(bW[bi]||'narrow'))return;
+      const svgEl=document.getElementById('main-svg');
+      const rect=svgEl.getBoundingClientRect();
+      const syU=(e.clientY-rect.top)/zoom;
+      const{botY,ns,topY:bayTopY2}=bayUsable(bi);
+      const fromBot=(botY-syU)/SC_BASE;
+      const slot=Math.max(0,Math.min(ns-it.hs,Math.round(fromBot-it.hs/2)));
+      const bpx=bayU(bi), bx2=bayX(bi);
+      const gh=document.getElementById('dg-'+bi);
+      if(gh){
+        const gy=botY-(slot+it.hs)*SC_BASE-(it.rh-it.hs)*SC_BASE;
+        const gH=it.rh*SC_BASE;
+        gh.setAttribute('y',gy);
+        gh.setAttribute('height',gH);
+        gh.setAttribute('width',bpx-2);
+        gh.setAttribute('x',bx2+1);
+        gh.setAttribute('opacity','.35');
+      }
+    });
+    dz.addEventListener('dragleave',e=>{
+      dz.setAttribute('stroke-width','.4');
+      const bi=+dz.dataset.bi;
+      const gh=document.getElementById('dg-'+bi);
+      if(gh)gh.setAttribute('opacity','0');
+    });
+    dz.addEventListener('drop',e=>{
+      e.preventDefault();
+      dz.setAttribute('stroke-width','.4');
+      const bi=+dz.dataset.bi;
+      const gh=document.getElementById('dg-'+bi);
+      if(gh)gh.setAttribute('opacity','0');
+      const iid=e.dataTransfer.getData('text/plain');
+      if(!iid)return;
+      const svgEl=document.getElementById('main-svg');
+      const rect=svgEl.getBoundingClientRect();
+      const syU=(e.clientY-rect.top)/zoom;
+      const it=IT.find(x=>x.id===iid);
+      const{botY,ns}=bayUsable(bi);
+      const fromBot=(botY-syU)/SC_BASE;
+      const slot=Math.max(0,Math.min(ns-(it?it.hs:1),Math.round(fromBot-(it?it.hs:1)/2)));
+      addIt(bi,iid,slot);
+    });
+  });
+}
+
+// ══════════════════════════════════════════════
+// PALETTE
+// ══════════════════════════════════════════════
+function togglePalSec(id){document.getElementById(id).classList.toggle('open');}
+
+function setPalFilter(f){
+  palFilter=f;
+  document.getElementById('pff-all').className='pff'+(f==='all'?' on':'');
+  document.getElementById('pff-narrow').className='pff'+(f==='narrow'?' onn':'');
+  document.getElementById('pff-wide').className='pff'+(f==='wide'?' onw':'');
+  renderPalette();
+}
+
+function renderPalette(){
+  const scroll=document.getElementById('pal-scroll');
+  const groups={'Shelves':[],'Cabinets':[],'Desks & Tables':[]};
+  IT.forEach(it=>{
+    if(palFilter!=='all'&&it.bw!==palFilter)return;
+    const g=it.t==='table'||it.t==='desk'?'Desks & Tables':
+             it.t==='shelf'||it.t==='deepshelf'||it.t==='singlesh'||it.t==='doublesh'?'Shelves':'Cabinets';
+    groups[g].push(it);
+  });
+  let h='';
+  for(const[gname,items] of Object.entries(groups)){
+    if(!items.length)continue;
+    h+=`<div class="pal-grp-lbl">${gname}</div>`;
+    for(const it of items){
+      // Disabled if no matching-width bay exists, or no bays at all
+      const hasBay=nB>0&&bW.includes(it.bw);
+      const fits=hasBay&&bW.some((w,i)=>w===it.bw&&it.hs<=bSl(i));
+      const dis=!hasBay;
+      const ico=`<svg width="22" height="16" viewBox="0 0 22 16" style="flex-shrink:0">${dc(it.t,22,16,it.c,it.b)}</svg>`;
+      const wc=it.bw==='narrow'?'wtag wtag-n':'wtag wtag-w';
+      h+=`<div class="pit${dis?' dis':''}" draggable="${dis?'false':'true'}" data-iid="${it.id}">
+        ${ico}
+        <div class="pit-t">
+          <div class="pit-n">${it.n} <span class="${wc}">${BW[it.bw].abbr}</span>${!fits&&hasBay?'<span style="font-size:.4rem;color:#e8470a;margin-left:3px">too tall</span>':''}</div>
+          <div class="pit-s">${it.hs}sl · ${it.sub}</div>
+        </div>
+        <div class="pit-p">$${it.p.toLocaleString()}</div>
+      </div>`;
+    }
+  }
+  if(!h)h='<div class="ae" style="padding:8px 3px;font-size:.52rem">No components — add bays first.</div>';
+  scroll.innerHTML=h;
+
+  // Bind drag events
+  scroll.querySelectorAll('.pit:not(.dis)').forEach(el=>{
+    el.addEventListener('dragstart',e=>{
+      dragIid=el.dataset.iid;
+      e.dataTransfer.effectAllowed='copy';
+      e.dataTransfer.setData('text/plain',el.dataset.iid);
+      el.style.opacity='.45';
+    });
+    el.addEventListener('dragend',()=>{el.style.opacity='';dragIid=null;});
+    // Click to add to first fitting bay
+    el.addEventListener('click',()=>{
+      const iid=el.dataset.iid;
+      const it=IT.find(x=>x.id===iid);
+      const bi=bW.findIndex((w,i)=>w===it.bw&&it.hs<=bSl(i));
+      if(bi>=0)addIt(bi,iid);
+    });
+  });
+}
+
+// ══════════════════════════════════════════════
+// ADD / REMOVE / CONFLICTS
+// ══════════════════════════════════════════════
+function addIt(bi,iid,slotHint){
+  const it=IT.find(x=>x.id===iid), ns=bSl(bi);
+  if(!it||it.bw!==(bW[bi]||'narrow')||it.hs>ns)return;
+  const slot=slotHint!==undefined?Math.max(0,Math.min(ns-it.hs,slotHint)):freeSlot(bi,it.hs,ns);
+  bI[bi].push({uid:++uid,iid,slot});
+  renderCanvas(); updateSummary(); updCost();
+}
+function freeSlot(bi,need,ns){
+  const pl=bI[bi]||[];
+  for(let s=0;s<=ns-need;s++){if(!pl.some(({iid,slot})=>{const it=IT.find(x=>x.id===iid);return!(s+need<=slot||s>=slot+it.hs);}))return s;}
+  return 0;
+}
+function delIt(bi,u){bI[bi]=(bI[bi]||[]).filter(x=>x.uid!==u);renderCanvas();updateSummary();updCost();}
+function getConfs(bi){
+  const items=bI[bi]||[],out=new Set();
+  for(let a=0;a<items.length;a++){const ia=items[a],ita=IT.find(x=>x.id===ia.iid);
+    for(let b=a+1;b<items.length;b++){const ib=items[b],itb=IT.find(x=>x.id===ib.iid);
+      if(ia.slot<ib.slot+itb.hs&&ia.slot+ita.hs>ib.slot){out.add(ia.uid);out.add(ib.uid);}}}
+  return out;
+}
+
+// ══════════════════════════════════════════════
+// STRUCTURE
+// ══════════════════════════════════════════════
+function chgBays(d){
+  const wasZero=nB===0;
+  nB=Math.max(0,nB+d);
+  hasAutoFit=false; // re-fit on next render
+  if(wasZero&&nB>0) document.getElementById('pssec-structure').classList.add('open');
+  const nt=nB+1;
+  while(tH.length<nt)tH.push('xl'); tH=tH.slice(0,nt);
+  while(tO.length<nt)tO.push(1);    tO=tO.slice(0,nt);
+  while(bW.length<nB)bW.push('narrow'); bW=bW.slice(0,nB);
+  while(bI.length<nB)bI.push([]);       bI=bI.slice(0,nB);
+  document.getElementById('bm').disabled=nB<=0;
+  document.getElementById('bd').textContent=nB;
+  document.getElementById('bdrv').textContent=nB>0?`${nB} bay${nB>1?'s':''}`:' ';
+  document.getElementById('track-section').style.display=nB>0?'':'none';
+  document.getElementById('width-section').style.display=nB>0?'':'none';
+  document.getElementById('canvas-hint').textContent=nB>0?'Drag from palette or click item to add · drag placed items to move · hover to delete':'Configure structure, then drag components onto bays';
+  refresh();
+}
+function renderTT(){
+  if(!nB){document.getElementById('ttb').innerHTML='';return;}
+  const ms=maxSl();
+  document.getElementById('ttb').innerHTML=Array.from({length:nB+1},(_,i)=>{
+    const sel=tH[i]||'xl';
+    const slack=ms-tSl(i);
+    const off=Math.min(Math.round(tO[i]??slack),slack);
+    const canSlide=slack>0;
+    const lbl=off===0?'⊤':off>=slack?'⊥':`${off} sl`;
+    const btns=ET.map(e=>`<button class="thb${sel===e.id?' sel':''}" onclick="setTH(${i},'${e.id}')">${e.l}</button>`).join('');
+    const sliderRow=canSlide
+      ? `<tr class="tpos-row"><td></td><td colspan="2"><div class="tpw">
+          <span class="tpos-lbl">Position</span>
+          <input class="tps" type="range" min="0" max="${slack}" step="1" value="${off}" oninput="setTO(${i},+this.value)">
+          <span class="tpv" id="tpv${i}">${lbl}</span>
+         </div></td></tr>`
+      : `<tr class="tpos-row tpos-dis"><td></td><td colspan="2"><div class="tpw">
+          <span class="tpos-lbl">Position</span>
+          <input class="tps" type="range" min="0" max="1" step="1" value="1" disabled>
+          <span class="tpv" id="tpv${i}" style="color:var(--rm)">⊥</span>
+         </div></td></tr>`;
+    return`<tr class="thead-row"><td><div class="tbg">T${i+1}</div></td>
+      <td colspan="2"><div class="thbs">${btns}</div></td>
+    </tr>${sliderRow}`;
+  }).join('');
+}
+function setTH(i,id){
+  tH[i]=id;
+  [i-1,i].forEach(bi=>{if(bi<0||bi>=nB)return;const ns=bSl(bi);bI[bi]=bI[bi].filter(({iid,slot})=>{const it=IT.find(x=>x.id===iid);return slot+it.hs<=ns;});});
+  refresh();
+}
+function setTO(i,v){
+  const slack=maxSl()-tSl(i);
+  tO[i]=Math.max(0,Math.min(slack,Math.round(+v)));
+  const off=tO[i], lbl=off===0?'⊤':off>=slack?'⊥':`${off} sl`;
+  const el=document.getElementById('tpv'+i); if(el)el.textContent=lbl;
+  renderCanvas();
+}
+function renderBS(){
+  if(!nB){document.getElementById('bsl').innerHTML='';document.getElementById('wn').textContent='';return;}
+  document.getElementById('bsl').innerHTML=bW.map((w,i)=>`<div class="bsr">
+    <div class="bsrn">${i+1}</div>
+    <div style="font-size:.58rem;flex:1;color:var(--dk)">${BW[w].l}</div>
+    <div class="bst">
+      <button class="bso${w==='narrow'?' an':''}" onclick="setBW(${i},'narrow')">N</button>
+      <button class="bso${w==='wide'?' aw':''}" onclick="setBW(${i},'wide')">W</button>
+    </div>
+    <button class="cpyb" onclick="openDup(${i})">copy…</button>
+  </div>`).join('');
+  document.getElementById('wn').textContent=`Min wall: ~${Math.round((bW.reduce((s,w)=>s+BW[w].mm,0)+70)/25.4*10)/10}"`;
+}
+function setBW(i,w){
+  bW[i]=w;
+  bI[i]=(bI[i]||[]).filter(({iid})=>{const it=IT.find(x=>x.id===iid);return it&&it.bw===w;});
+  refresh();
+}
+function updateStructVal(){
+  const el=document.getElementById('struct-val');
+  if(el)el.textContent=nB>0?`${nB} bay${nB>1?'s':''}·${nB+1}T`:'—';
+}
+
+// ══════════════════════════════════════════════
+// POSTS
+// ══════════════════════════════════════════════
+function renderPosts(){
+  document.getElementById('pgr').innerHTML=POSTS.map(p=>{
+    const q=pQ[p.id]||0;
+    return`<div class="pc"><div class="pcn">${p.n}</div><div class="pcd">${p.d}</div>
+    <div class="pcf"><span class="pcp">$${p.p}</span><div class="pcq">
+      <button class="pcqb" onclick="chgP('${p.id}',-1)">−</button>
+      <div class="pcqn" id="pq${p.id}">${q}</div>
+      <button class="pcqb" onclick="chgP('${p.id}',1)">+</button>
+    </div></div></div>`;
+  }).join('');
+  const tot=Object.entries(pQ).reduce((s,[id,q])=>{const p=POSTS.find(x=>x.id===id);return s+(p?p.p*q:0);},0);
+  document.getElementById('posts-val').textContent=tot>0?`$${tot.toLocaleString()}`:'';
+}
+function chgP(id,d){pQ[id]=Math.max(0,(pQ[id]||0)+d);renderPosts();updateSummary();updCost();}
+
+// ══════════════════════════════════════════════
+// SUMMARY + COST
+// ══════════════════════════════════════════════
+function setGroup(m){
+  groupMode=m;
+  document.getElementById('tog-bay').classList.toggle('on',m==='bay');
+  document.getElementById('tog-item').classList.toggle('on',m==='item');
+  updateSummary();
+}
+function updateSummary(){
+  const body=document.getElementById('sum-body');
+  if(!nB){body.innerHTML='<div class="ae">Add bays to begin.</div>';return;}
+  let h='';
+  // Tracks
+  const tg={};tH.slice(0,nB+1).forEach(id=>tg[id]=(tg[id]||0)+1);
+  h+=`<div class="sg"><div class="sgl">E-Tracks</div>`;
+  Object.entries(tg).forEach(([id,q])=>{const t=ET.find(e=>e.id===id);h+=`<div class="sl"><div class="sln">${t.l} × ${q}</div><div class="slp">$${(t.p*q).toLocaleString()}</div></div>`;});
+  h+=`</div>`;
+  // Posts
+  const pl=Object.entries(pQ).filter(([,q])=>q>0);
+  if(pl.length){h+=`<div class="sg"><div class="sgl">Posts</div>`;pl.forEach(([id,q])=>{const p=POSTS.find(x=>x.id===id);h+=`<div class="sl"><div class="sln">${p.n} × ${q}</div><div class="slp">$${(p.p*q).toLocaleString()}</div></div>`;});h+=`</div>`;}
+  // Components
+  const allC=bI.flatMap((bay,bi)=>bay.map(({iid,slot})=>({iid,slot,bi})));
+  if(allC.length){
+    if(groupMode==='bay'){
+      for(let bi=0;bi<nB;bi++){if(!bI[bi].length)continue;h+=`<div class="sg"><div class="sgl">Bay ${bi+1} · ${BW[bW[bi]||'narrow'].l}</div>`;bI[bi].forEach(({iid,slot})=>{const it=IT.find(x=>x.id===iid);h+=`<div class="sl"><div><div class="sln">${it.n}</div><div class="slsub">slot ${slot+1}${it.hs>1?`–${slot+it.hs}`:''}</div></div><div class="slp">$${it.p.toLocaleString()}</div></div>`;});h+=`</div>`;}
+    } else {
+      const cnt={};allC.forEach(({iid})=>cnt[iid]=(cnt[iid]||0)+1);
+      h+=`<div class="sg"><div class="sgl">Components</div>`;
+      Object.entries(cnt).forEach(([iid,q])=>{const it=IT.find(x=>x.id===iid);h+=`<div class="sl"><div><div class="sln">${it.n}</div><div class="slsub">× ${q}</div></div><div class="slp">$${(it.p*q).toLocaleString()}</div></div>`;});
+      h+=`</div>`;
+    }
+  }
+  body.innerHTML=h;
+}
+function calcCost(){
+  const tc=tH.slice(0,nB+1).reduce((s,id)=>{const t=ET.find(e=>e.id===id);return s+(t?t.p:0);},0);
+  const pc=Object.entries(pQ).reduce((s,[id,q])=>{const p=POSTS.find(x=>x.id===id);return s+(p?p.p*q:0);},0);
+  const cc=bI.reduce((s,bay)=>s+bay.reduce((ss,{iid})=>{const it=IT.find(x=>x.id===iid);return ss+(it?it.p:0);},0),0);
+  return{tc,pc,cc,tot:tc+pc+cc};
+}
+function updCost(){
+  const{tc,pc,cc,tot}=calcCost(),f=n=>'$'+n.toLocaleString();
+  [['hta',f(tot)],['obt',f(tot)],['cfa',f(tot)]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v;});
+  const p=[];if(tc)p.push(`Tracks ${f(tc)}`);if(pc)p.push(`Posts ${f(pc)}`);if(cc)p.push(`Components ${f(cc)}`);
+  document.getElementById('obd').textContent=p.join(' · ');
+  document.getElementById('cfb').disabled=tot===0;
+}
+
+// ══════════════════════════════════════════════
+// PRINT QUOTE
+// ══════════════════════════════════════════════
+function printQuote(){
+  const{tot}=calcCost();
+  let rows='';
+  const tg={};tH.slice(0,nB+1).forEach(id=>tg[id]=(tg[id]||0)+1);
+  Object.entries(tg).forEach(([id,q])=>{const t=ET.find(e=>e.id===id);rows+=`<tr><td>${t.l} E-Track</td><td>${q}</td><td>$${(t.p*q).toLocaleString()}</td></tr>`;});
+  Object.entries(pQ).filter(([,q])=>q>0).forEach(([id,q])=>{const p=POSTS.find(x=>x.id===id);rows+=`<tr><td>${p.n}</td><td>${q}</td><td>$${(p.p*q).toLocaleString()}</td></tr>`;});
+  for(let bi=0;bi<nB;bi++){bI[bi].forEach(({iid,slot})=>{const it=IT.find(x=>x.id===iid);rows+=`<tr><td>${it.n} <span style="color:#999">(Bay ${bi+1}, slot ${slot+1})</span></td><td>1</td><td>$${it.p.toLocaleString()}</td></tr>`;});}
+
+  // Build print SVG (unscaled, 560px wide)
+  const tw=totalSvgW(), fY=floorY(), EXTRA=52;
+  const PW=560, pz=PW/tw, PH=Math.round((fY+EXTRA)*pz);
+  const nt2=nB+1;
+  let pi='';
+  pi+=`<defs><pattern id="ph" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#ccc" stroke-width=".8"/></pattern></defs>`;
+  pi+=`<line x1="${ML*pz}" y1="${fY*pz}" x2="${(tw-ML)*pz}" y2="${fY*pz}" stroke="#aaa" stroke-width="1"/>`;
+  pi+=`<text x="${ML*pz}" y="${fY*pz+10}" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="8" fill="#bbb">floor</text>`;
+  for(let i=0;i<nt2;i++){
+    const tx=trackX(i)*pz,tsl=tSl(i),thPx=tsl*SC_BASE*pz,tTop=trackTopY(i)*pz,twp=TW*pz;
+    pi+=`<rect x="${tx}" y="${tTop}" width="${twp}" height="${thPx}" rx="2" fill="#c0bcb4"/>`;
+    for(let s=0;s<tsl;s++) pi+=`<rect x="${tx+1.5*pz}" y="${tTop+s*SC_BASE*pz}" width="${(TW-3)*pz}" height="${SC_BASE*pz*.4}" rx=".4" fill="#807c78" opacity=".4"/>`;
+    const t=gET(i);
+    if(t) pi+=`<text x="${tx+twp/2}" y="${tTop-6}" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="8" fill="#aaa">${t.l}</text>`;
+    pi+=`<text x="${tx+twp/2}" y="${fY*pz+19}" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="7" fill="#bbb">T${i+1}</text>`;
+  }
+  for(let i=0;i<nB;i++){
+    const bx=bayX(i)*pz,bpx=bayU(i)*pz,wt=bW[i]||'narrow';
+    const outTop=Math.min(trackTopY(i),trackTopY(i+1))*pz;
+    const outBot=Math.max(trackTopY(i)+tSl(i)*SC_BASE,trackTopY(i+1)+tSl(i+1)*SC_BASE)*pz;
+    const{botY:bBot,topY:bTop}=bayUsable(i);
+    const bayBotY=bBot*pz,bayTopY=bTop*pz;
+    const bgC=wt==='narrow'?'#f5f2eb':'#eaf0f5',tc3=wt==='narrow'?'#b8a058':'#5090b8';
+    pi+=`<rect x="${bx}" y="${outTop}" width="${bpx}" height="${outBot-outTop}" fill="${bgC}" opacity=".22"/>`;
+    if(bayTopY>outTop) pi+=`<rect x="${bx}" y="${outTop}" width="${bpx}" height="${bayTopY-outTop}" fill="url(#ph)" opacity=".5"/>`;
+    if(bayBotY>bayTopY) pi+=`<rect x="${bx}" y="${bayTopY}" width="${bpx}" height="${bayBotY-bayTopY}" fill="${bgC}" opacity=".35"/>`;
+    (bI[i]||[]).forEach(({iid,slot})=>{
+      const it=IT.find(x=>x.id===iid);if(!it)return;
+      const ch=it.rh*SC_BASE*pz,cw=bpx-2,cy=bayBotY-(slot+it.hs)*SC_BASE*pz-(it.rh-it.hs)*SC_BASE*pz;
+      pi+=`<g transform="translate(${bx+1},${cy})">${dc(it.t,cw,ch,it.c,it.b)}</g>`;
+    });
+    pi+=`<text x="${bx+bpx/2}" y="${fY*pz+28}" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="8" fill="${tc3}">Bay ${i+1} · ${BW[wt].abbr} · ${BW[wt].in}</text>`;
+  }
+  const totalMM=bW.reduce((s,w)=>s+BW[w].mm,0),totalIn=(totalMM/25.4).toFixed(1);
+  const baL=bayX(0)*pz,baR=(bayX(nB-1)+bayU(nB-1))*pz,mX=(baL+baR)/2;
+  pi+=`<line x1="${baL}" y1="${fY*pz+40}" x2="${baR}" y2="${fY*pz+40}" stroke="#ccc" stroke-width=".8"/>`;
+  pi+=`<line x1="${baL}" y1="${fY*pz+38}" x2="${baL}" y2="${fY*pz+42}" stroke="#ccc" stroke-width=".8"/>`;
+  pi+=`<line x1="${baR}" y1="${fY*pz+38}" x2="${baR}" y2="${fY*pz+42}" stroke="#ccc" stroke-width=".8"/>`;
+  pi+=`<text x="${mX}" y="${fY*pz+37}" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="7" fill="#bbb">total ${totalIn}" (${totalMM}mm)</text>`;
+  const svgStr=`<svg xmlns="http://www.w3.org/2000/svg" width="${PW}" height="${PH}">${pi}</svg>`;
+
+  const d=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Vitsœ 606 Quote</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#111;padding:32px;max-width:640px;margin:0 auto}
+  h1{font-size:1.1rem;font-weight:300;letter-spacing:-.01em;margin-bottom:4px}
+  .sub{font-size:.7rem;color:#999;margin-bottom:20px}
+  .svg-wrap{border:1px solid #eee;padding:12px;background:#fafafa;margin-bottom:20px}
+  table{width:100%;border-collapse:collapse;font-size:.78rem;margin-bottom:16px}
+  th{font-size:.58rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#999;padding:4px 8px;border-bottom:1px solid #ddd;text-align:left}
+  th:nth-child(2),th:nth-child(3){text-align:right}
+  td{padding:5px 8px;border-bottom:1px solid #eee;text-align:left}
+  td:nth-child(2),td:nth-child(3){text-align:right}
+  .tot td{font-weight:500;border-top:2px solid #ccc;border-bottom:none}
+  .disc{font-size:.6rem;color:#999;margin-top:8px}
+  @media print{body{padding:16px}.no-print{display:none}}
+</style>
+</head><body>
+<h1>Vitsœ 606 Universal Shelving System</h1>
+<p class="sub">${d} · ${nB} bay${nB>1?'s':''} · ${bW.map((w,bi)=>`Bay ${bi+1}: ${BW[w].l}`).join(' · ')}</p>
+<div class="svg-wrap">${svgStr}</div>
+<table>
+  <thead><tr><th>Item</th><th style="text-align:right;width:48px">Qty</th><th style="text-align:right;width:90px">Price</th></tr></thead>
+  <tbody>${rows}</tbody>
+  <tfoot><tr class="tot"><td><strong>Estimated Total</strong></td><td></td><td>$${tot.toLocaleString()}</td></tr></tfoot>
+</table>
+<p class="disc">Prices USD incl. delivery to contiguous US. Please confirm final quote with your Vitsœ planner at vitsoe.com</p>
+<p class="disc no-print" style="margin-top:12px">Use your browser's Print or Save as PDF (Ctrl/Cmd+P) to save this quote.</p>
+</body></html>`;
+
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  window.open(url,'_blank');
+}
+
+// ══════════════════════════════════════════════
+// DUP
+// ══════════════════════════════════════════════
+let dupTarget=-1;
+function openDup(dest){
+  dupTarget=dest;
+  const srcs=Array.from({length:nB},(_,i)=>i).filter(i=>i!==dest&&bW[i]===bW[dest]&&bI[i].length>0);
+  if(!srcs.length){alert(`No other ${bW[dest]} bays with content to copy from.`);return;}
+  document.getElementById('dup-opts').innerHTML=srcs.map(i=>`<button class="modal-opt" onclick="doDup(${i})">Bay ${i+1} — ${bI[i].length} item${bI[i].length>1?'s':''}</button>`).join('');
+  document.getElementById('dup-modal').classList.add('show');
+}
+function doDup(src){
+  bI[dupTarget]=bI[src].map(({iid,slot})=>({uid:++uid,iid,slot})).filter(({iid,slot})=>{const it=IT.find(x=>x.id===iid);return slot+it.hs<=bSl(dupTarget);});
+  closeModal('dup-modal'); renderCanvas(); updateSummary(); updCost();
+}
+
+// ══════════════════════════════════════════════
+// SAVE / LOAD
+// ══════════════════════════════════════════════
+function buildJSON(){return JSON.stringify({v:1,nB,tH:[...tH],tO:[...tO],bW:[...bW],pQ:{...pQ},bI:bI.map(bay=>bay.map(({iid,slot})=>({iid,slot})))},null,2);}
+function openSave(){document.getElementById('save-ta').value=buildJSON();document.getElementById('save-modal').classList.add('show');}
+function copyJSON(){navigator.clipboard?.writeText(document.getElementById('save-ta').value).then(()=>alert('Copied!')).catch(()=>{document.getElementById('save-ta').select();document.execCommand('copy');});}
+function dlJSON(){const b=new Blob([document.getElementById('save-ta').value],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='606-config.json';a.click();}
+function openLoad(){document.getElementById('load-ta').value='';document.getElementById('load-err').textContent='';document.getElementById('load-modal').classList.add('show');}
+function loadJSON(){
+  try{
+    const c=JSON.parse(document.getElementById('load-ta').value);
+    if(c.v!==1)throw new Error('Unknown format');
+    nB=c.nB;tH=[...c.tH];tO=[...c.tO];bW=[...c.bW];pQ={...c.pQ};uid=0;
+    bI=c.bI.map(bay=>bay.map(({iid,slot})=>({uid:++uid,iid,slot})));
+    closeModal('load-modal');
+    document.getElementById('bm').disabled=nB<=0;
+    document.getElementById('bd').textContent=nB;
+    document.getElementById('bdrv').textContent=nB>0?`${nB} bay${nB>1?'s':''}`:' ';
+    document.getElementById('track-section').style.display=nB>0?'':'none';
+    document.getElementById('width-section').style.display=nB>0?'':'none';
+    refresh();
+  }catch(e){document.getElementById('load-err').textContent='Error: '+e.message;}
+}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.mbg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('show');}));
+
+// ══════════════════════════════════════════════
+// RESET + REFRESH
+// ══════════════════════════════════════════════
+function resetAll(){
+  nB=0;tH=[];tO=[];bW=[];pQ={};bI=[];uid=0;
+  document.getElementById('bm').disabled=true;
+  document.getElementById('bd').textContent='0';
+  document.getElementById('bdrv').textContent=' ';
+  document.getElementById('track-section').style.display='none';
+  document.getElementById('width-section').style.display='none';
+  refresh();
+}
+function refresh(){
+  renderTT(); renderBS(); renderPosts(); renderCanvas(); renderPalette(); updateSummary(); updCost(); updateStructVal();
+}
+
+// ── INIT ──
+refresh();
+</script>
+</body>
+</html>
